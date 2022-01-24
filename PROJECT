@@ -1,0 +1,16 @@
+domain: phoban.io
+layout:
+- go.kubebuilder.io/v3
+projectName: configma
+repo: github.com/phoban01/configma
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: phoban.io
+  group: util
+  kind: ConfigMatch
+  path: github.com/phoban01/configma/api/v1alpha1
+  version: v1alpha1
+version: "3"

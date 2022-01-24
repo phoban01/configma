@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: output-bucket-02k
+  namespace: default
+  labels:
+    config.matcher.io/group: "config"
+data:
+  super: |-
+    yaml: is
+    great: for
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: output-bucket-390k
+  namespace: default
+  labels:
+    config.matcher.io/group: "config"
+data:
+  value: "1000"
+  filename: "myfile.txt"
+---
+apiVersion: util.phoban.io/v1alpha1
+kind: ConfigMatch
+metadata:
+  name: configmatch-sample
+spec:
+  sourceRef:
+    kind: ConfigMap
+    pattern: output-bucket-.*k$
+    matchGroup: config
+  target:
+    kind: ConfigMap
+    name: my-output-data
+    namespace: default

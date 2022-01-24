@@ -1,0 +1,24 @@
+# permissions for end users to edit configmatches.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: configmatch-editor-role
+rules:
+- apiGroups:
+  - phoban.io.my.domain
+  resources:
+  - configmatches
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - phoban.io.my.domain
+  resources:
+  - configmatches/status
+  verbs:
+  - get

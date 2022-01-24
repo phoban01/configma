@@ -1,0 +1,58 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - util.phoban.io
+  resources:
+  - configmatches
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - util.phoban.io
+  resources:
+  - configmatches/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - util.phoban.io
+  resources:
+  - configmatches/status
+  verbs:
+  - get
+  - patch
+  - update
