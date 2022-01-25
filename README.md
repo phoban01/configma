@@ -54,7 +54,7 @@ spec:
 ```
 We must also add the following label to our ConfigMaps: `configma.io/group: config`.
 
-With this in place ConfigMa will now generate a ConfigMap named `network-conf` in the `default` namespace and keep it's data in sync with the latest version of the ConfigMap matching the regex pattern `.spec.sourceRef.pattern` with the matching group.
+With this in place ConfigMa will now generate a ConfigMap named `network-conf` in the `default` namespace and keep it's data in sync with the latest version of the ConfigMap matching `.spec.sourceRef.pattern` with the `matchGroup` label.
 
 Your workload can now use this stable reference:
 
