@@ -14,7 +14,7 @@ network-conf-89fea1               1      12m
 network-conf-c5b12f               1      15m
 ```
 
-This present a difficulty if you wish to use this data in a Pod such as the following:
+This presents a difficulty if you wish to use this data in a Pod:
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -33,7 +33,7 @@ spec:
         name: network-conf-be1c2b
 ```
 
-Although our application can read the data as it changes in the ConfigMap, we need to find a way to update the ConfigMap reference in the pod each time a new version of our ConfigMap is generated.
+Although our application can read the data as it changes in the ConfigMap, we need to find a way to update the ConfigMap reference in the pod each time a new version of the ConfigMap is generated with the latest network configuration data.
 
 This is the problem ConfigMa aims to solve. Using the `ConfigMatcher` custom resource we now do the following:
 
