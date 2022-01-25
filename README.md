@@ -1,6 +1,6 @@
 # ConfigMa 
 
-***Stable Kubernetes ConfigMaps for an ever-changing world***
+***Stable Kubernetes ConfigMaps in an unstable world***
 
 ConfigMa enables you to present a persistent ConfigMap to your application using the data from the latest instance of an immutable ConfigMap.
 
