@@ -16,4 +16,4 @@ images:
   newTag: v1.0.0-alpha.2
 - name: manager
   newName: ghcr.io/phoban01/configma
-  newTag: v1.0.0-alpha.4
+  newTag: v1.0.0-beta.1
