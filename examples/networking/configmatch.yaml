@@ -1,0 +1,14 @@
+apiVersion: util.phoban.io/v1alpha1
+kind: ConfigMatch
+metadata:
+  name: network-config
+  namespace: default
+spec:
+  sourceRef:
+    kind: ConfigMap
+    matchGroup: networking
+    pattern: ^network-conf-.*$
+  target:
+    kind: ConfigMap
+    name: network-conf
+    namespace: default

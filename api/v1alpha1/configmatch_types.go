@@ -21,7 +21,10 @@ import (
 )
 
 const (
+	FieldManagerName   = "configmatch-controller"
 	LabelMatcher       = "config.matcher.io/group"
+	LabelSelector      = "config.matcher.io/auto-update-for-group"
+	UpdateAnnotation   = "config.matcher.io/version"
 	MatchLabelIndexKey = ".metadata.matchLabel"
 )
 

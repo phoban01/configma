@@ -18,9 +18,12 @@ package controllers
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"regexp"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -50,8 +53,8 @@ type ConfigMatchReconciler struct {
 //+kubebuilder:rbac:groups=util.phoban.io,resources=configmatches/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=util.phoban.io,resources=configmatches/finalizers,verbs=update
 
-//+kubebuilder:rbac:groups="",resources=configmaps,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=configmaps;secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;patch
 
 // Reconcile is the main reconciler loop.
 func (r *ConfigMatchReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -107,10 +110,16 @@ func (r *ConfigMatchReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 				}
 			}
 			target.Data = newest.Data
+
+			if err := r.patchDeployments(ctx, obj, target.Data); err != nil {
+				return err
+			}
+
 			return nil
 		}); err != nil {
 			return ctrl.Result{}, err
 		}
+
 	case "Secret":
 		secretList := &corev1.SecretList{}
 		if err := r.Client.List(ctx, secretList, client.MatchingLabels{
@@ -153,6 +162,35 @@ func (r *ConfigMatchReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	}
 
 	return ctrl.Result{}, nil
+}
+
+func (r *ConfigMatchReconciler) patchDeployments(ctx context.Context, obj *v1alpha1.ConfigMatch, value map[string]string) error {
+	encData, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	h := sha256.New()
+	h.Write(encData)
+	hash := fmt.Sprintf("%x", h.Sum(nil))
+
+	listOption := client.MatchingLabels{v1alpha1.LabelSelector: obj.Spec.SourceRef.MatchGroup}
+	deployments := &appsv1.DeploymentList{}
+	if err := r.Client.List(ctx, deployments, client.InNamespace(obj.Spec.Target.Namespace), listOption); err != nil {
+		return err
+	}
+
+	for _, deploy := range deployments.Items {
+		newDeploy := deploy.DeepCopy()
+		annotations := newDeploy.GetAnnotations()
+		annotations[v1alpha1.UpdateAnnotation] = hash
+		newDeploy.SetAnnotations(annotations)
+		if err := r.Patch(ctx, newDeploy, client.MergeFrom(&deploy)); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
